@@ -74,11 +74,9 @@ export default function HomeScreen() {
 
     setLoading(true);
     try {
-      // Extract formations from both images
       const homeFormation = await extractFormationFromImage(homeTeamImage.uri);
       const awayFormation = await extractFormationFromImage(awayTeamImage.uri);
 
-      // Navigate to confirmation screen
       router.push({
         pathname: '/confirmation',
         params: {
@@ -95,90 +93,133 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Premium Header */}
         <View style={styles.header}>
+          <View style={styles.headerBadge}>
+            <Text style={styles.headerBadgeText}>⚽ AI POWERED</Text>
+          </View>
           <Text style={styles.title}>サッカーAI予想</Text>
-          <Text style={styles.subtitle}>スタメン画像から試合展開を予測</Text>
+          <Text style={styles.subtitle}>シミュレーション</Text>
+          <Text style={styles.description}>
+            スタメン画像から試合展開を予測
+          </Text>
         </View>
 
         {/* Home Team Section */}
-        <View style={styles.teamSection}>
-          <Text style={styles.teamLabel}>ホームチーム</Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionBadge}>
+              <Text style={styles.sectionBadgeText}>1</Text>
+            </View>
+            <Text style={styles.sectionTitle}>ホームチーム</Text>
+          </View>
+
           {homeTeamImage ? (
             <View style={styles.imageContainer}>
               <Image source={{ uri: homeTeamImage.uri }} style={styles.image} />
-              <TouchableOpacity
-                style={styles.changeButton}
-                onPress={handlePickHomeTeamImage}
-              >
-                <Text style={styles.changeButtonText}>画像を変更</Text>
-              </TouchableOpacity>
+              <View style={styles.imageOverlay}>
+                <TouchableOpacity
+                  style={styles.changeImageButton}
+                  onPress={handlePickHomeTeamImage}
+                >
+                  <Text style={styles.changeImageButtonText}>画像を変更</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ) : (
-            <View style={styles.imageUploadArea}>
+            <View style={styles.uploadArea}>
               <TouchableOpacity
                 style={styles.uploadButton}
                 onPress={handlePickHomeTeamImage}
               >
-                <Text style={styles.uploadButtonText}>📷 ライブラリから選択</Text>
+                <Text style={styles.uploadButtonIcon}>📷</Text>
+                <Text style={styles.uploadButtonText}>ライブラリから選択</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.uploadButton, styles.cameraButton]}
+                style={[styles.uploadButton, styles.uploadButtonSecondary]}
                 onPress={handleTakeHomeTeamPhoto}
               >
-                <Text style={styles.uploadButtonText}>📸 カメラで撮影</Text>
+                <Text style={styles.uploadButtonIcon}>📸</Text>
+                <Text style={styles.uploadButtonText}>カメラで撮影</Text>
               </TouchableOpacity>
             </View>
           )}
+        </View>
+
+        {/* VS Divider */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>VS</Text>
+          <View style={styles.dividerLine} />
         </View>
 
         {/* Away Team Section */}
-        <View style={styles.teamSection}>
-          <Text style={styles.teamLabel}>アウェイチーム</Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionBadge}>
+              <Text style={styles.sectionBadgeText}>2</Text>
+            </View>
+            <Text style={styles.sectionTitle}>アウェイチーム</Text>
+          </View>
+
           {awayTeamImage ? (
             <View style={styles.imageContainer}>
               <Image source={{ uri: awayTeamImage.uri }} style={styles.image} />
-              <TouchableOpacity
-                style={styles.changeButton}
-                onPress={handlePickAwayTeamImage}
-              >
-                <Text style={styles.changeButtonText}>画像を変更</Text>
-              </TouchableOpacity>
+              <View style={styles.imageOverlay}>
+                <TouchableOpacity
+                  style={styles.changeImageButton}
+                  onPress={handlePickAwayTeamImage}
+                >
+                  <Text style={styles.changeImageButtonText}>画像を変更</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ) : (
-            <View style={styles.imageUploadArea}>
+            <View style={styles.uploadArea}>
               <TouchableOpacity
                 style={styles.uploadButton}
                 onPress={handlePickAwayTeamImage}
               >
-                <Text style={styles.uploadButtonText}>📷 ライブラリから選択</Text>
+                <Text style={styles.uploadButtonIcon}>📷</Text>
+                <Text style={styles.uploadButtonText}>ライブラリから選択</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.uploadButton, styles.cameraButton]}
+                style={[styles.uploadButton, styles.uploadButtonSecondary]}
                 onPress={handleTakeAwayTeamPhoto}
               >
-                <Text style={styles.uploadButtonText}>📸 カメラで撮影</Text>
+                <Text style={styles.uploadButtonIcon}>📸</Text>
+                <Text style={styles.uploadButtonText}>カメラで撮影</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
 
-        {/* Analyze Button */}
-        <TouchableOpacity
-          style={[
-            styles.analyzeButton,
-            (!homeTeamImage || !awayTeamImage) && styles.analyzeButtonDisabled,
-          ]}
-          onPress={handleAnalyze}
-          disabled={!homeTeamImage || !awayTeamImage || loading}
-        >
-          {loading ? (
-            <ActivityIndicator color={Colors.white} size="large" />
-          ) : (
-            <Text style={styles.analyzeButtonText}>分析開始</Text>
-          )}
-        </TouchableOpacity>
+        {/* CTA Button */}
+        <View style={styles.ctaContainer}>
+          <TouchableOpacity
+            style={[
+              styles.analyzeButton,
+              (!homeTeamImage || !awayTeamImage) && styles.analyzeButtonDisabled,
+            ]}
+            onPress={handleAnalyze}
+            disabled={!homeTeamImage || !awayTeamImage || loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={Colors.white} size="small" />
+            ) : (
+              <>
+                <Text style={styles.analyzeButtonText}>試合分析を開始</Text>
+                <Text style={styles.analyzeButtonSubtext}>AI予想を見る</Text>
+              </>
+            )}
+          </TouchableOpacity>
+          <Text style={styles.ctaHint}>
+            {!homeTeamImage || !awayTeamImage
+              ? '両チームの画像を選択してください'
+              : '分析を開始します'}
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -190,89 +231,205 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
   },
+
+  // Header
   header: {
-    marginBottom: 32,
+    marginTop: 24,
+    marginBottom: 40,
     alignItems: 'center',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: Colors.primary,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-  },
-  teamSection: {
-    marginBottom: 24,
-  },
-  teamLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.textPrimary,
+  headerBadge: {
+    backgroundColor: Colors.primaryLight2,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
     marginBottom: 12,
   },
-  imageUploadArea: {
+  headerBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.primary,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: Colors.primary,
+    marginBottom: 4,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: Colors.accent,
+    marginBottom: 12,
+  },
+  description: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+
+  // Section
+  section: {
+    marginBottom: 32,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  sectionBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  sectionBadgeText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+
+  // Upload Area
+  uploadArea: {
     gap: 12,
   },
   uploadButton: {
-    backgroundColor: Colors.primaryLight,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    backgroundColor: Colors.primary,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  cameraButton: {
-    backgroundColor: Colors.accentLight,
+  uploadButtonSecondary: {
+    backgroundColor: Colors.accent,
+    shadowColor: Colors.accent,
+  },
+  uploadButtonIcon: {
+    fontSize: 20,
   },
   uploadButtonText: {
     color: Colors.white,
     fontSize: 16,
     fontWeight: '600',
   },
+
+  // Image Container
   imageContainer: {
     position: 'relative',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   image: {
     width: '100%',
-    height: 200,
-    borderRadius: 12,
+    height: 220,
     backgroundColor: Colors.gray200,
   },
-  changeButton: {
-    marginTop: 8,
-    paddingVertical: 8,
+  imageOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: Colors.gray300,
+  },
+  changeImageButton: {
+    backgroundColor: Colors.white,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
   },
-  changeButtonText: {
-    color: Colors.textPrimary,
+  changeImageButtonText: {
+    color: Colors.primary,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+
+  // Divider
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 32,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.border,
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+
+  // CTA
+  ctaContainer: {
+    marginTop: 16,
   },
   analyzeButton: {
     backgroundColor: Colors.primary,
-    paddingVertical: 16,
+    paddingVertical: 20,
     paddingHorizontal: 24,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 24,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
   analyzeButtonDisabled: {
     backgroundColor: Colors.gray400,
     opacity: 0.6,
+    shadowOpacity: 0.1,
   },
   analyzeButtonText: {
     color: Colors.white,
     fontSize: 18,
     fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  analyzeButtonSubtext: {
+    color: Colors.white,
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 4,
+    opacity: 0.9,
+  },
+  ctaHint: {
+    marginTop: 12,
+    textAlign: 'center',
+    fontSize: 12,
+    color: Colors.textTertiary,
+    fontWeight: '500',
   },
 });

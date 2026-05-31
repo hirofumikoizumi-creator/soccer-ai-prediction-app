@@ -27,7 +27,7 @@ export default function ConfirmationScreen() {
       setHomeTeam(JSON.parse(params.homeTeam as string));
       setAwayTeam(JSON.parse(params.awayTeam as string));
     }
-  }, [params]);
+  }, [params.homeTeam, params.awayTeam]);
 
   const handleTeamNameChange = (team: 'home' | 'away', name: string) => {
     if (team === 'home' && homeTeam) {
@@ -77,11 +77,14 @@ export default function ConfirmationScreen() {
         },
       });
     } catch (error) {
-      Alert.alert('エラー', '分析に失敗しました。もう一度お試しください。');
-      console.error(error);
+      Alert.alert('エラー', '試合分析に失敗しました。もう一度お試しください。');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoBack = () => {
+    router.back();
   };
 
   if (!homeTeam || !awayTeam) {
@@ -94,13 +97,20 @@ export default function ConfirmationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>認識結果確認</Text>
-        <Text style={styles.subtitle}>内容を確認・修正してください</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerBadge}>✏️ 認識結果を確認</Text>
+          <Text style={styles.headerTitle}>AIが認識した情報を編集できます</Text>
+        </View>
 
         {/* Home Team */}
-        <View style={styles.teamCard}>
-          <Text style={styles.teamTitle}>ホームチーム</Text>
+        <View style={styles.teamSection}>
+          <View style={styles.teamSectionHeader}>
+            <Text style={styles.teamSectionBadge}>🏠</Text>
+            <Text style={styles.teamSectionTitle}>ホームチーム</Text>
+          </View>
+
           <View style={styles.formGroup}>
             <Text style={styles.label}>チーム名</Text>
             <TextInput
@@ -108,38 +118,48 @@ export default function ConfirmationScreen() {
               value={homeTeam.team}
               onChangeText={(text) => handleTeamNameChange('home', text)}
               placeholder="チーム名を入力"
+              placeholderTextColor={Colors.textTertiary}
             />
           </View>
+
           <View style={styles.formGroup}>
             <Text style={styles.label}>フォーメーション</Text>
             <TextInput
               style={styles.input}
               value={homeTeam.formation}
               onChangeText={(text) => handleFormationChange('home', text)}
-              placeholder="例：4-3-3"
+              placeholder="例: 4-3-3"
+              placeholderTextColor={Colors.textTertiary}
             />
           </View>
-          <View style={styles.playersSection}>
+
+          <View style={styles.formGroup}>
             <Text style={styles.label}>スタメン</Text>
             {homeTeam.players.map((player, index) => (
-              <View key={index} style={styles.playerRow}>
+              <View key={index} style={styles.playerInputContainer}>
                 <Text style={styles.playerPosition}>{player.position}</Text>
                 <TextInput
                   style={styles.playerInput}
                   value={player.name}
-                  onChangeText={(text) =>
-                    handlePlayerNameChange('home', index, text)
-                  }
+                  onChangeText={(text) => handlePlayerNameChange('home', index, text)}
                   placeholder="選手名"
+                  placeholderTextColor={Colors.textTertiary}
                 />
               </View>
             ))}
           </View>
         </View>
 
+        {/* Divider */}
+        <View style={styles.divider} />
+
         {/* Away Team */}
-        <View style={styles.teamCard}>
-          <Text style={styles.teamTitle}>アウェイチーム</Text>
+        <View style={styles.teamSection}>
+          <View style={styles.teamSectionHeader}>
+            <Text style={styles.teamSectionBadge}>✈️</Text>
+            <Text style={styles.teamSectionTitle}>アウェイチーム</Text>
+          </View>
+
           <View style={styles.formGroup}>
             <Text style={styles.label}>チーム名</Text>
             <TextInput
@@ -147,29 +167,32 @@ export default function ConfirmationScreen() {
               value={awayTeam.team}
               onChangeText={(text) => handleTeamNameChange('away', text)}
               placeholder="チーム名を入力"
+              placeholderTextColor={Colors.textTertiary}
             />
           </View>
+
           <View style={styles.formGroup}>
             <Text style={styles.label}>フォーメーション</Text>
             <TextInput
               style={styles.input}
               value={awayTeam.formation}
               onChangeText={(text) => handleFormationChange('away', text)}
-              placeholder="例：4-3-3"
+              placeholder="例: 4-2-3-1"
+              placeholderTextColor={Colors.textTertiary}
             />
           </View>
-          <View style={styles.playersSection}>
+
+          <View style={styles.formGroup}>
             <Text style={styles.label}>スタメン</Text>
             {awayTeam.players.map((player, index) => (
-              <View key={index} style={styles.playerRow}>
+              <View key={index} style={styles.playerInputContainer}>
                 <Text style={styles.playerPosition}>{player.position}</Text>
                 <TextInput
                   style={styles.playerInput}
                   value={player.name}
-                  onChangeText={(text) =>
-                    handlePlayerNameChange('away', index, text)
-                  }
+                  onChangeText={(text) => handlePlayerNameChange('away', index, text)}
                   placeholder="選手名"
+                  placeholderTextColor={Colors.textTertiary}
                 />
               </View>
             ))}
@@ -179,21 +202,23 @@ export default function ConfirmationScreen() {
         {/* Action Buttons */}
         <View style={styles.buttonGroup}>
           <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.backButtonText}>戻る</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             style={styles.analyzeButton}
             onPress={handleAnalyze}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={Colors.white} />
+              <ActivityIndicator color={Colors.white} size="small" />
             ) : (
-              <Text style={styles.analyzeButtonText}>分析開始</Text>
+              <Text style={styles.analyzeButtonText}>試合分析を開始</Text>
             )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={handleGoBack}
+            disabled={loading}
+          >
+            <Text style={styles.backButtonText}>戻る</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -207,42 +232,67 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: 40,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: Colors.primary,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+
+  // Header
+  header: {
     marginBottom: 24,
+    alignItems: 'center',
   },
-  teamCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.primary,
-  },
-  teamTitle: {
-    fontSize: 18,
+  headerBadge: {
+    fontSize: 14,
     fontWeight: '600',
     color: Colors.primary,
-    marginBottom: 16,
+    marginBottom: 12,
+    backgroundColor: Colors.primaryLight2,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+
+  // Team Section
+  teamSection: {
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  teamSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18,
+  },
+  teamSectionBadge: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  teamSectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+
+  // Form Group
   formGroup: {
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    color: Colors.textPrimary,
+    color: Colors.textSecondary,
     marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   input: {
     borderWidth: 1,
@@ -252,63 +302,75 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 14,
     color: Colors.textPrimary,
+    backgroundColor: Colors.background,
   },
-  playersSection: {
-    marginTop: 16,
-  },
-  playerRow: {
+
+  // Player Input
+  playerInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
     gap: 8,
   },
   playerPosition: {
+    width: 50,
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.textSecondary,
-    width: 50,
+    color: Colors.primary,
+    textAlign: 'center',
   },
   playerInput: {
     flex: 1,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 6,
-    paddingHorizontal: 10,
+    borderRadius: 8,
+    paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 13,
     color: Colors.textPrimary,
+    backgroundColor: Colors.background,
   },
+
+  // Divider
+  divider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: 24,
+  },
+
+  // Buttons
   buttonGroup: {
-    flexDirection: 'row',
     gap: 12,
     marginTop: 24,
   },
-  backButton: {
-    flex: 1,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backButtonText: {
-    color: Colors.primary,
-    fontSize: 16,
-    fontWeight: '600',
-  },
   analyzeButton: {
-    flex: 1,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 8,
     backgroundColor: Colors.primary,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
     alignItems: 'center',
-    justifyContent: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   analyzeButtonText: {
     color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  backButton: {
+    backgroundColor: Colors.surface,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  backButtonText: {
+    color: Colors.textPrimary,
     fontSize: 16,
     fontWeight: '600',
   },

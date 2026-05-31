@@ -1,61 +1,68 @@
 /**
- * SAMURAI BLUE Theme Colors
- * Inspired by Japanese national team (SAMURAI BLUE)
+ * SAMURAI BLUE Premium Theme
+ * Inspired by Japanese national team with modern premium aesthetics
  */
 
 export const Colors = {
-  // Primary colors - SAMURAI BLUE
+  // Primary colors - SAMURAI BLUE (Premium)
   primary: '#003DA5', // Deep Navy Blue
-  primaryLight: '#1E5BA8',
-  primaryDark: '#001F5C',
+  primaryLight: '#0052CC', // Brighter blue
+  primaryDark: '#001F5C', // Darker blue
 
-  // Accent colors
-  accent: '#E60012', // Red (Japanese flag inspired)
-  accentLight: '#FF4444',
-  accentDark: '#B30000',
+  // Accent colors - Japan Red
+  accent: '#E60012', // Vibrant Red
+  accentLight: '#FF4444', // Lighter red
+  accentDark: '#B30000', // Darker red
 
-  // Neutral colors
+  // Neutral colors - Premium grayscale
   white: '#FFFFFF',
   black: '#000000',
-  gray100: '#F5F5F5',
-  gray200: '#EEEEEE',
-  gray300: '#E0E0E0',
-  gray400: '#BDBDBD',
-  gray500: '#9E9E9E',
-  gray600: '#757575',
-  gray700: '#616161',
-  gray800: '#424242',
-  gray900: '#212121',
+  gray50: '#F9FAFB',
+  gray100: '#F3F4F6',
+  gray200: '#E5E7EB',
+  gray300: '#D1D5DB',
+  gray400: '#9CA3AF',
+  gray500: '#6B7280',
+  gray600: '#4B5563',
+  gray700: '#374151',
+  gray800: '#1F2937',
+  gray900: '#111827',
 
   // Status colors
-  success: '#4CAF50',
-  warning: '#FF9800',
-  error: '#F44336',
-  info: '#2196F3',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
+  info: '#3B82F6',
 
   // Semantic colors
   background: '#FFFFFF',
-  surface: '#F5F5F5',
-  surfaceVariant: '#EEEEEE',
-  border: '#E0E0E0',
-  divider: '#BDBDBD',
+  surface: '#F8F9FA',
+  surfaceVariant: '#F0F2F5',
+  border: '#E5E7EB',
+  divider: '#D1D5DB',
 
   // Text colors
-  textPrimary: '#212121',
-  textSecondary: '#757575',
-  textTertiary: '#9E9E9E',
+  textPrimary: '#1A1A1A',
+  textSecondary: '#555555',
+  textTertiary: '#888888',
   textInverse: '#FFFFFF',
 
   // Gradient colors
   gradientStart: '#003DA5',
-  gradientEnd: '#1E5BA8',
+  gradientEnd: '#0052CC',
+  gradientAccent: '#E60012',
 
   // Transparency
   transparent: 'transparent',
+  blackTransparent5: 'rgba(0, 0, 0, 0.05)',
   blackTransparent10: 'rgba(0, 0, 0, 0.1)',
   blackTransparent20: 'rgba(0, 0, 0, 0.2)',
   whiteTransparent10: 'rgba(255, 255, 255, 0.1)',
   whiteTransparent20: 'rgba(255, 255, 255, 0.2)',
+
+  // Premium colors
+  primaryLight2: '#E3F2FD',
+  accentLight2: '#FFEBEE',
 };
 
 export type ColorKey = keyof typeof Colors;
