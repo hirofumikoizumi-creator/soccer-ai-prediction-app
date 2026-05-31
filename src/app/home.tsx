@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -15,12 +15,25 @@ import { pickImageFromLibrary, takePhotoWithCamera } from '@/services/imageServi
 import { extractFormationFromImage } from '@/services/geminiService';
 import { ImageData, TeamFormation } from '@/types';
 import { handleError, ErrorCodes } from '@/utils/errorHandler';
+import { canAnalyze, getRemainingAnalysisCount, incrementAnalysisCount, getDailyLimit } from '@/services/analysisLimitService';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [homeTeamImage, setHomeTeamImage] = useState<ImageData | null>(null);
   const [awayTeamImage, setAwayTeamImage] = useState<ImageData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [remainingAnalysis, setRemainingAnalysis] = useState(getDailyLimit());
+  const [analysisAllowed, setAnalysisAllowed] = useState(true);
+
+  useEffect(() => {
+    const checkAnalysisLimit = async () => {
+      const allowed = await canAnalyze();
+      const remaining = await getRemainingAnalysisCount();
+      setAnalysisAllowed(allowed);
+      setRemainingAnalysis(remaining);
+    };
+    checkAnalysisLimit();
+  }, []);
 
   const handlePickHomeTeamImage = async () => {
     try {
@@ -72,10 +85,21 @@ export default function HomeScreen() {
       return;
     }
 
+    const allowed = await canAnalyze();
+    if (!allowed) {
+      handleError('本日の分析回数の上限に達しました。明日以降にお試しください。', ErrorCodes.MISSING_DATA);
+      return;
+    }
+
     setLoading(true);
     try {
       const homeFormation = await extractFormationFromImage(homeTeamImage.uri);
       const awayFormation = await extractFormationFromImage(awayTeamImage.uri);
+
+      // Increment analysis count on successful analysis
+      await incrementAnalysisCount();
+      const remaining = await getRemainingAnalysisCount();
+      setRemainingAnalysis(remaining);
 
       router.push({
         pathname: '/confirmation',
@@ -200,10 +224,10 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[
               styles.analyzeButton,
-              (!homeTeamImage || !awayTeamImage) && styles.analyzeButtonDisabled,
+              (!homeTeamImage || !awayTeamImage || !analysisAllowed) && styles.analyzeButtonDisabled,
             ]}
             onPress={handleAnalyze}
-            disabled={!homeTeamImage || !awayTeamImage || loading}
+            disabled={!homeTeamImage || !awayTeamImage || loading || !analysisAllowed}
           >
             {loading ? (
               <ActivityIndicator color={Colors.white} size="small" />
@@ -214,8 +238,18 @@ export default function HomeScreen() {
               </>
             )}
           </TouchableOpacity>
+          <View style={styles.limitInfoContainer}>
+            <Text style={styles.limitInfoText}>
+              📊 本日の分析回数: {getDailyLimit() - remainingAnalysis}/{getDailyLimit()}
+            </Text>
+            <Text style={styles.limitInfoSubtext}>
+              残り: {remainingAnalysis}回
+            </Text>
+          </View>
           <Text style={styles.ctaHint}>
-            {!homeTeamImage || !awayTeamImage
+            {!analysisAllowed
+              ? '本日の分析回数上限に達しました'
+              : !homeTeamImage || !awayTeamImage
               ? '両チームの画像を選択してください'
               : '分析を開始します'}
           </Text>
@@ -431,5 +465,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textTertiary,
     fontWeight: '500',
+  },
+  limitInfoContainer: {
+    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.primaryLight2,
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.primary,
+  },
+  limitInfoText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.primary,
+    marginBottom: 4,
+  },
+  limitInfoSubtext: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: Colors.textSecondary,
   },
 });
