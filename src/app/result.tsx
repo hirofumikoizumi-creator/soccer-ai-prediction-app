@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import {
   View,
@@ -19,16 +19,18 @@ export default function ResultScreen() {
   const params = useLocalSearchParams();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [showAd, setShowAd] = useState(true);
+  const adShownRef = useRef(false);
 
   useEffect(() => {
-    if (params.result) {
+    if (params.result && !adShownRef.current) {
+      adShownRef.current = true;
       setResult(JSON.parse(params.result as string));
       // Show ad after result is loaded
       showInterstitialAd().finally(() => {
         setShowAd(false);
       });
     }
-  }, [params]);
+  }, [params.result]);
 
   if (!result) {
     return (
@@ -141,7 +143,10 @@ export default function ResultScreen() {
         <View style={styles.buttonGroup}>
           <TouchableOpacity
             style={styles.homeButton}
-            onPress={() => router.replace('/home')}
+            onPress={() => {
+              adShownRef.current = false;
+              router.replace('/home');
+            }}
           >
             <Text style={styles.homeButtonText}>ホームに戻る</Text>
           </TouchableOpacity>
