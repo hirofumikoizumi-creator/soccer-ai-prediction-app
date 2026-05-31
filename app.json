@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "サッカーAI予想",
+    "slug": "soccer-ai-prediction",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "socceraiprediction",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTabletMode": false,
+      "bundleIdentifier": "com.example.soccerAIPrediction",
+      "buildNumber": "1",
+      "icon": "./assets/images/icon.png",
+      "infoPlist": {
+        "NSCameraUsageDescription": "カメラを使用してスタメン画像を撮影します",
+        "NSPhotoLibraryUsageDescription": "フォトライブラリからスタメン画像を選択します",
+        "NSPhotoLibraryAddUsageDescription": "スタメン画像をフォトライブラリに保存します"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#003DA5",
+        "foregroundImage": "./assets/images/android-icon-foreground.png"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "フォトライブラリへのアクセスを許可してください",
+          "cameraPermission": "カメラへのアクセスを許可してください"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#003DA5",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
