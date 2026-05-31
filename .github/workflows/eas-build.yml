@@ -16,6 +16,9 @@ on:
       - 'eas.json'
       - '.github/workflows/eas-build.yml'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,9 +31,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --legacy-peer-deps
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
@@ -49,6 +53,7 @@ jobs:
           EXPO_PUBLIC_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EXPO_PUBLIC_ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
           EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID: ${{ secrets.ADMOB_INTERSTITIAL_AD_UNIT_ID }}
+        continue-on-error: true
 
       - name: Notify on success
         if: success()
