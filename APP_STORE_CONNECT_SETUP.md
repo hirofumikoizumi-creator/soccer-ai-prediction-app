@@ -34,9 +34,9 @@ Expoアカウントの認証情報を入力してください。
 ### ステップ3: 環境変数を設定
 
 ```bash
-export EXPO_PUBLIC_GEMINI_API_KEY="AQ.Ab8RN6Lc3C0Xu96GsX2vNGUZpairrCq_nKE7gBITN-sB_wQBkw"
-export EXPO_PUBLIC_ADMOB_APP_ID="ca-app-pub-5840457424714744-2343444534"
-export EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID="ca-app-pub-5840457424714744/2994711458"
+export EXPO_PUBLIC_GEMINI_API_KEY="your_gemini_api_key"
+export EXPO_PUBLIC_ADMOB_APP_ID="your_admob_app_id"
+export EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID="your_admob_interstitial_ad_unit_id"
 ```
 
 ### ステップ4: iOSビルドを実行

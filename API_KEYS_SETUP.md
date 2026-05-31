@@ -37,20 +37,10 @@ export EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID="your_ad_unit_id"
 
 ### ✅ 既に取得済みのキー
 
-#### Gemini API キー
-```
-AQ.Ab8RN6Lc3C0Xu96GsX2vNGUZpairrCq_nKE7gBITN-sB_wQBkw
-```
+本プロジェクトのAPIキーは、環境変数として設定されています。
 
-#### AdMob App ID
-```
-ca-app-pub-5840457424714744-2343444534
-```
-
-#### AdMob インタースティシャル広告ユニット ID
-```
-ca-app-pub-5840457424714744/2994711458
-```
+**注意**: セキュリティのため、実際のAPIキーはこのファイルには記載されていません。
+EAS Buildまたはローカル開発時に、環境変数として設定してください。
 
 ---
 
@@ -61,9 +51,9 @@ ca-app-pub-5840457424714744/2994711458
 ```bash
 cd /home/ubuntu/soccer-ai-prediction-app
 
-export EXPO_PUBLIC_GEMINI_API_KEY="AQ.Ab8RN6Lc3C0Xu96GsX2vNGUZpairrCq_nKE7gBITN-sB_wQBkw"
-export EXPO_PUBLIC_ADMOB_APP_ID="ca-app-pub-5840457424714744-2343444534"
-export EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID="ca-app-pub-5840457424714744/2994711458"
+export EXPO_PUBLIC_GEMINI_API_KEY="your_gemini_api_key"
+export EXPO_PUBLIC_ADMOB_APP_ID="your_admob_app_id"
+export EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID="your_admob_interstitial_ad_unit_id"
 ```
 
 ### ステップ2: Expoサーバーを起動
