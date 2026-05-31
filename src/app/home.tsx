@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -15,6 +14,7 @@ import { Colors } from '@/constants/colors';
 import { pickImageFromLibrary, takePhotoWithCamera } from '@/services/imageService';
 import { extractFormationFromImage } from '@/services/geminiService';
 import { ImageData, TeamFormation } from '@/types';
+import { handleError, ErrorCodes } from '@/utils/errorHandler';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function HomeScreen() {
         setHomeTeamImage(image);
       }
     } catch (error) {
-      Alert.alert('エラー', 'ホームチームの画像を取得できませんでした');
+      handleError(error, ErrorCodes.IMAGE_SELECTION_FAILED);
     }
   };
 
@@ -40,7 +40,7 @@ export default function HomeScreen() {
         setHomeTeamImage(image);
       }
     } catch (error) {
-      Alert.alert('エラー', 'カメラを起動できませんでした');
+      handleError(error, ErrorCodes.CAMERA_PERMISSION_DENIED);
     }
   };
 
@@ -51,7 +51,7 @@ export default function HomeScreen() {
         setAwayTeamImage(image);
       }
     } catch (error) {
-      Alert.alert('エラー', 'アウェイチームの画像を取得できませんでした');
+      handleError(error, ErrorCodes.IMAGE_SELECTION_FAILED);
     }
   };
 
@@ -62,13 +62,13 @@ export default function HomeScreen() {
         setAwayTeamImage(image);
       }
     } catch (error) {
-      Alert.alert('エラー', 'カメラを起動できませんでした');
+      handleError(error, ErrorCodes.CAMERA_PERMISSION_DENIED);
     }
   };
 
   const handleAnalyze = async () => {
     if (!homeTeamImage || !awayTeamImage) {
-      Alert.alert('エラー', '両チームの画像を選択してください');
+      handleError('両チームの画像を選択してください', ErrorCodes.MISSING_DATA);
       return;
     }
 
@@ -87,8 +87,7 @@ export default function HomeScreen() {
         },
       });
     } catch (error) {
-      Alert.alert('エラー', 'AIが認識できませんでした。手入力で修正してください。');
-      console.error(error);
+      handleError(error, ErrorCodes.FORMATION_EXTRACTION_FAILED);
     } finally {
       setLoading(false);
     }

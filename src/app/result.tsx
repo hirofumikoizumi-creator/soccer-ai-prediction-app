@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import {
   View,
   StyleSheet,
@@ -11,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/colors';
 import { AnalysisResult } from '@/types';
+import { showInterstitialAd } from '@/services/admobService';
 
 export default function ResultScreen() {
   const router = useRouter();
@@ -21,13 +23,12 @@ export default function ResultScreen() {
   useEffect(() => {
     if (params.result) {
       setResult(JSON.parse(params.result as string));
+      // Show ad after result is loaded
+      showInterstitialAd().finally(() => {
+        setShowAd(false);
+      });
     }
   }, [params]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowAd(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   if (!result) {
     return (
@@ -41,8 +42,9 @@ export default function ResultScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.adContainer}>
-          <Text style={styles.adText}>広告を読み込み中...</Text>
+          <Text style={styles.adText}>広告を表示中...</Text>
           <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={styles.adSubText}>少々お待ちください</Text>
         </View>
       </SafeAreaView>
     );
@@ -168,6 +170,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.textSecondary,
     marginBottom: 16,
+  },
+  adSubText: {
+    fontSize: 12,
+    color: Colors.textTertiary,
+    marginTop: 16,
   },
   header: {
     marginBottom: 24,
