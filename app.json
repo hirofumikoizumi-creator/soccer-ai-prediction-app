@@ -9,7 +9,7 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTabletMode": false,
-      "bundleIdentifier": "com.example.soccerAIPrediction",
+      "bundleIdentifier": "com.gsw.socceraiyosou",
       "buildNumber": "1",
       "icon": "./assets/images/icon.png",
       "infoPlist": {
