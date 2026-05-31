@@ -14,11 +14,20 @@ interface GeminiResponse {
   }[];
 }
 
+// Demo mode - use mock data when API key is not set
+const DEMO_MODE = !GEMINI_API_KEY;
+
 /**
  * Extract formation and player information from an image
  */
 export async function extractFormationFromImage(imageUri: string): Promise<TeamFormation> {
   try {
+    // Demo mode: return mock data
+    if (DEMO_MODE) {
+      console.log('Demo mode: Using mock formation data');
+      return getMockFormation();
+    }
+
     // Convert image to base64
     const response = await fetch(imageUri);
     const blob = await response.blob();
@@ -68,7 +77,7 @@ export async function extractFormationFromImage(imageUri: string): Promise<TeamF
     );
 
     const responseText = result.data.candidates[0].content.parts[0].text;
-    
+
     // Parse JSON from response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -76,7 +85,7 @@ export async function extractFormationFromImage(imageUri: string): Promise<TeamF
     }
 
     const formationData = JSON.parse(jsonMatch[0]);
-    
+
     return {
       team: formationData.team || 'Unknown',
       formation: formationData.formation || 'Unknown',
@@ -96,16 +105,22 @@ export async function analyzeMatch(
   awayTeam: TeamFormation
 ): Promise<AnalysisResult> {
   try {
+    // Demo mode: return mock data
+    if (DEMO_MODE) {
+      console.log('Demo mode: Using mock analysis data');
+      return getMockAnalysis(homeTeam, awayTeam);
+    }
+
     const prompt = `
     以下のサッカーの試合情報を分析してください：
     
     ホームチーム: ${homeTeam.team}
     フォーメーション: ${homeTeam.formation}
-    スタメン: ${homeTeam.players.map(p => p.name).join(', ')}
+    スタメン: ${homeTeam.players.map((p) => p.name).join(', ')}
     
     アウェイチーム: ${awayTeam.team}
     フォーメーション: ${awayTeam.formation}
-    スタメン: ${awayTeam.players.map(p => p.name).join(', ')}
+    スタメン: ${awayTeam.players.map((p) => p.name).join(', ')}
     
     以下の情報をJSON形式で返してください：
     {
@@ -141,7 +156,7 @@ export async function analyzeMatch(
     );
 
     const responseText = result.data.candidates[0].content.parts[0].text;
-    
+
     // Parse JSON from response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -179,4 +194,95 @@ async function blobToBase64(blob: Blob): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
+}
+
+/**
+ * Get mock formation data for demo mode
+ */
+function getMockFormation(): TeamFormation {
+  const formations = [
+    {
+      team: '日本代表',
+      formation: '4-3-3',
+      players: [
+        { name: '鈴木彩艶', position: 'GK' },
+        { name: '冨安健洋', position: 'DF' },
+        { name: '板倉滉', position: 'DF' },
+        { name: '酒井宏樹', position: 'DF' },
+        { name: '長友佑都', position: 'DF' },
+        { name: '田中碧', position: 'MF' },
+        { name: '遠藤航', position: 'MF' },
+        { name: '南野拓実', position: 'MF' },
+        { name: '堂安律', position: 'FW' },
+        { name: '伊東純也', position: 'FW' },
+        { name: '岡崎慎司', position: 'FW' },
+      ],
+    },
+    {
+      team: 'スペイン代表',
+      formation: '4-2-3-1',
+      players: [
+        { name: 'ウナイ・シモン', position: 'GK' },
+        { name: 'アスピリクエタ', position: 'DF' },
+        { name: 'ラモス', position: 'DF' },
+        { name: 'アルバ', position: 'DF' },
+        { name: 'ポロ', position: 'DF' },
+        { name: 'ブスケツ', position: 'MF' },
+        { name: 'ペドリ', position: 'MF' },
+        { name: 'ガビ', position: 'MF' },
+        { name: 'フェラン・トーレス', position: 'MF' },
+        { name: 'ニコ・ウィリアムス', position: 'FW' },
+        { name: 'モラタ', position: 'FW' },
+      ],
+    },
+    {
+      team: 'ドイツ代表',
+      formation: '4-1-4-1',
+      players: [
+        { name: 'ノイアー', position: 'GK' },
+        { name: 'ルディガー', position: 'DF' },
+        { name: 'シュレ', position: 'DF' },
+        { name: 'ラウム', position: 'DF' },
+        { name: 'ケーラー', position: 'DF' },
+        { name: 'キミッヒ', position: 'MF' },
+        { name: 'ハフェルツ', position: 'MF' },
+        { name: 'ミュラー', position: 'MF' },
+        { name: 'ザネ', position: 'MF' },
+        { name: 'ゴレツカ', position: 'MF' },
+        { name: 'ヴェルナー', position: 'FW' },
+      ],
+    },
+  ];
+
+  return formations[Math.floor(Math.random() * formations.length)];
+}
+
+/**
+ * Get mock analysis data for demo mode
+ */
+function getMockAnalysis(homeTeam: TeamFormation, awayTeam: TeamFormation): AnalysisResult {
+  const homeWin = Math.floor(Math.random() * 40) + 30;
+  const awayWin = Math.floor(Math.random() * 35) + 20;
+  const draw = 100 - homeWin - awayWin;
+
+  const scores = ['2-1', '1-1', '2-0', '1-0', '3-1', '2-2', '0-0', '1-2'];
+  const predictedScore = scores[Math.floor(Math.random() * scores.length)];
+
+  const analyses = [
+    `${homeTeam.team}がボールを保持しながら試合を進める展開が予想されます。${awayTeam.team}はカウンターを狙う形になりそうです。中盤での主導権争いが試合の鍵となります。`,
+    `${homeTeam.team}の${homeTeam.formation}フォーメーションが${awayTeam.team}の${awayTeam.formation}に対して優位に働くと予想されます。セットプレーでの得点機会が増えそうです。`,
+    `両チームの中盤の激しい競り合いが予想されます。${homeTeam.team}の素早いビルドアップに対し、${awayTeam.team}がどう対応するかが焦点です。`,
+    `${awayTeam.team}が守備を固めながら${homeTeam.team}のアタックを耐える展開が予想されます。後半の交代選手の投入がゲームを左右しそうです。`,
+    `${homeTeam.team}のサイド攻撃が${awayTeam.team}の守備ラインに脅威を与えると予想されます。両サイドバックの活躍が試合の鍵になるでしょう。`,
+  ];
+
+  return {
+    homeTeam,
+    awayTeam,
+    homeWinProbability: homeWin,
+    drawProbability: draw,
+    awayWinProbability: awayWin,
+    predictedScore,
+    matchAnalysis: analyses[Math.floor(Math.random() * analyses.length)],
+  };
 }
