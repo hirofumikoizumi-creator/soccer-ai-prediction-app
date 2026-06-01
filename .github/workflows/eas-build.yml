@@ -2,22 +2,9 @@ name: EAS Build and Submit to App Store
 
 on:
   workflow_dispatch:
-    inputs:
-      submit:
-        description: 'Submit to App Store Connect'
-        required: false
-        default: 'true'
   push:
     branches:
       - master
-    paths:
-      - 'src/**'
-      - 'app.json'
-      - 'eas.json'
-      - '.github/workflows/eas-build.yml'
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -25,19 +12,18 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install
 
       - name: Setup Expo
-        uses: expo/expo-github-action@v8
+        uses: expo/expo-github-action@v7
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
@@ -53,15 +39,11 @@ jobs:
           EXPO_PUBLIC_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EXPO_PUBLIC_ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
           EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID: ${{ secrets.ADMOB_INTERSTITIAL_AD_UNIT_ID }}
-        continue-on-error: true
 
-      - name: Notify on success
+      - name: Build completed
         if: success()
-        run: |
-          echo "✅ Build and submission completed successfully!"
-          echo "Check App Store Connect for the new build."
+        run: echo "✅ Build and submission completed successfully!"
 
-      - name: Notify on failure
+      - name: Build failed
         if: failure()
-        run: |
-          echo "❌ Build failed. Check the logs above for details."
+        run: echo "❌ Build failed. Check the logs above for details."
