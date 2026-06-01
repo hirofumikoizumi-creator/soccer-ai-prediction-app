@@ -17,10 +17,7 @@
       "developmentClient": true
     },
     "production": {
-      "ios": {
-        "node": "20.11.0",
-        "npm": "10.2.4"
-      }
+      "ios": {}
     }
   },
   "submit": {
