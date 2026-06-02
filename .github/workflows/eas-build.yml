@@ -37,7 +37,6 @@ jobs:
             --platform ios \
             --profile production \
             --non-interactive \
-            --no-cache \
             --wait \
             --auto-submit
         env:
