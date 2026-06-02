@@ -12,7 +12,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/colors';
-import { TeamFormation } from '@/types';
 import { analyzeMatch } from '@/services/geminiService';
 
 export default function ConfirmationScreen() {
@@ -24,8 +23,15 @@ export default function ConfirmationScreen() {
 
   useEffect(() => {
     if (params.homeTeam && params.awayTeam) {
-      setHomeTeam(JSON.parse(params.homeTeam as string));
-      setAwayTeam(JSON.parse(params.awayTeam as string));
+      try {
+        const homeTeamData = JSON.parse(params.homeTeam as string);
+        const awayTeamData = JSON.parse(params.awayTeam as string);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setHomeTeam(homeTeamData);
+        setAwayTeam(awayTeamData);
+      } catch {
+        // Ignore parsing errors
+      }
     }
   }, [params.homeTeam, params.awayTeam]);
 
@@ -76,7 +82,7 @@ export default function ConfirmationScreen() {
           result: JSON.stringify(result),
         },
       });
-    } catch (error) {
+    } catch {
       Alert.alert('エラー', '試合分析に失敗しました。もう一度お試しください。');
     } finally {
       setLoading(false);

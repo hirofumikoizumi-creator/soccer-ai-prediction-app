@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/colors';
 import { pickImageFromLibrary, takePhotoWithCamera } from '@/services/imageService';
 import { extractFormationFromImage } from '@/services/geminiService';
-import { ImageData, TeamFormation } from '@/types';
+import { ImageData } from '@/types';
 import { handleError, ErrorCodes } from '@/utils/errorHandler';
 import { canAnalyze, getRemainingAnalysisCount, incrementAnalysisCount, getDailyLimit } from '@/services/analysisLimitService';
 
@@ -26,13 +26,19 @@ export default function HomeScreen() {
   const [analysisAllowed, setAnalysisAllowed] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const checkAnalysisLimit = async () => {
       const allowed = await canAnalyze();
       const remaining = await getRemainingAnalysisCount();
-      setAnalysisAllowed(allowed);
-      setRemainingAnalysis(remaining);
+      if (isMounted) {
+        setAnalysisAllowed(allowed);
+        setRemainingAnalysis(remaining);
+      }
     };
     checkAnalysisLimit();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handlePickHomeTeamImage = async () => {
