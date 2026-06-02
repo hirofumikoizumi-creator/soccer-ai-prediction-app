@@ -5,9 +5,16 @@
  * during app startup. These tasks are scheduled to run after the app is fully rendered.
  * 
  * All initialization errors are caught and logged but do not crash the app.
+ * 
+ * Includes:
+ * - Build 8: Main thread interceptor
+ * - Build 9: Memory safety audit
+ * - Build 10: Code-level memory safety verification
  */
 
 import { preloadCriticalImages, preloadSecondaryImages } from '@/utils/lazyImageLoader';
+import { initializeMemorySafetyAudit } from '@/services/memorySafetyAudit';
+import { initializeCodeLevelMemorySafety } from '@/services/codeLevelMemorySafety';
 
 /**
  * Flag to track if initialization has been done
@@ -65,6 +72,11 @@ export async function initializeSecondaryResources(): Promise<void> {
  * Schedule deferred initialization
  * This function schedules initialization tasks to run after app startup
  * Returns a promise that resolves when scheduling is complete (not when tasks finish)
+ * 
+ * Includes:
+ * - Build 8: Main thread interceptor (already initialized in App.tsx)
+ * - Build 9: Memory safety audit (scheduled at 2000ms)
+ * - Build 10: Code-level memory safety verification (scheduled at 2500ms)
  */
 export async function scheduleDeferredInitialization(): Promise<void> {
   try {
@@ -90,6 +102,24 @@ export async function scheduleDeferredInitialization(): Promise<void> {
         console.warn('Error scheduling secondary resources:', error);
       }
     }, 1500);
+
+    // Schedule memory safety audit (Build 9)
+    setTimeout(() => {
+      try {
+        initializeMemorySafetyAudit();
+      } catch (error) {
+        console.warn('Error initializing memory safety audit:', error);
+      }
+    }, 2000);
+
+    // Schedule code-level memory safety verification (Build 10)
+    setTimeout(() => {
+      try {
+        initializeCodeLevelMemorySafety();
+      } catch (error) {
+        console.warn('Error initializing code-level memory safety:', error);
+      }
+    }, 2500);
   } catch (error) {
     console.warn('Error in scheduleDeferredInitialization:', error);
     // Continue anyway - scheduling errors should not crash the app
