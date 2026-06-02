@@ -81,15 +81,44 @@ const glowKeyframe = new Keyframe({
 });
 
 export function AnimatedIcon() {
+  const [glowError, setGlowError] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+
+  const handleGlowError = (error: Error) => {
+    console.warn('Glow image failed to load:', error);
+    setGlowError(true);
+  };
+
+  const handleLogoError = (error: Error) => {
+    console.warn('Logo image failed to load:', error);
+    setLogoError(true);
+  };
+
   return (
     <View style={styles.iconContainer}>
-      <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
-        <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
-      </Animated.View>
+      {!glowError && (
+        <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
+          <Image
+            style={styles.glow}
+            source={require('@/assets/images/logo-glow.png')}
+            onError={handleGlowError}
+            cachePolicy="memory-disk"
+          />
+        </Animated.View>
+      )}
 
       <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
       <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
+        {!logoError ? (
+          <Image
+            style={styles.image}
+            source={require('@/assets/images/expo-logo.png')}
+            onError={handleLogoError}
+            cachePolicy="memory-disk"
+          />
+        ) : (
+          <View style={[styles.image, styles.fallbackImage]} />
+        )}
       </Animated.View>
     </View>
   );
@@ -116,6 +145,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 76,
     height: 71,
+  },
+  fallbackImage: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
   },
   background: {
     borderRadius: 40,

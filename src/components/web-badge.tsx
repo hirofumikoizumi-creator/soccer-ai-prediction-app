@@ -1,6 +1,6 @@
 import { version } from 'expo/package.json';
 import { Image } from 'expo-image';
-import { useColorScheme, StyleSheet } from 'react-native';
+import { useColorScheme, StyleSheet, useState } from 'react-native';
 
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
@@ -9,20 +9,30 @@ import { Spacing } from '@/constants/theme';
 
 export function WebBadge() {
   const scheme = useColorScheme();
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = (error: Error) => {
+    console.warn('Badge image failed to load:', error);
+    setImageError(true);
+  };
 
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="code" themeColor="textSecondary" style={styles.versionText}>
         v{version}
       </ThemedText>
-      <Image
-        source={
-          scheme === 'dark'
-            ? require('@/assets/images/expo-badge-white.png')
-            : require('@/assets/images/expo-badge.png')
-        }
-        style={styles.badgeImage}
-      />
+      {!imageError && (
+        <Image
+          source={
+            scheme === 'dark'
+              ? require('@/assets/images/expo-badge-white.png')
+              : require('@/assets/images/expo-badge.png')
+          }
+          style={styles.badgeImage}
+          onError={handleImageError}
+          cachePolicy="memory-disk"
+        />
+      )}
     </ThemedView>
   );
 }

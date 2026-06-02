@@ -7,11 +7,21 @@
     "icon": "./assets/images/icon.png",
     "scheme": "socceraiprediction",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#003DA5"
+    },
     "ios": {
       "supportsTabletMode": false,
       "bundleIdentifier": "com.gsw.socceraiyosou",
       "buildNumber": "4",
       "icon": "./assets/images/icon.png",
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#003DA5"
+      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "カメラを使用してスタメン画像を撮影します",
@@ -21,6 +31,11 @@
       }
     },
     "android": {
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#003DA5"
+      },
       "adaptiveIcon": {
         "backgroundColor": "#003DA5",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
@@ -35,7 +50,12 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#003DA5"
+      }
     },
     "plugins": [
       "expo-router",
@@ -51,7 +71,8 @@
         {
           "backgroundColor": "#003DA5",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200
+          "imageWidth": 200,
+          "resizeMode": "contain"
         }
       ],
       [

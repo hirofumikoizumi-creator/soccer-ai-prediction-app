@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, useState } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ExternalLink } from '@/components/external-link';
@@ -18,6 +18,12 @@ export default function TabTwoScreen() {
     bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
   };
   const theme = useTheme();
+  const [tutorialImageError, setTutorialImageError] = useState(false);
+
+  const handleTutorialImageError = (error: Error) => {
+    console.warn('Tutorial image failed to load:', error);
+    setTutorialImageError(true);
+  };
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -80,10 +86,14 @@ export default function TabTwoScreen() {
                 press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
                 project.
               </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
+              {!tutorialImageError && (
+                <Image
+                  source={require('@/assets/images/tutorial-web.png')}
+                  style={styles.imageTutorial}
+                  onError={handleTutorialImageError}
+                  cachePolicy="memory-disk"
+                />
+              )}
             </ThemedView>
           </Collapsible>
 
