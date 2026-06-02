@@ -1,27 +1,23 @@
 /**
  * AdMob Service
- * Placeholder implementation for AdMob integration
- * In production, integrate with google-mobile-ads-react-native
+ * Integration with react-native-google-mobile-ads
  */
+
+import { MobileAds, InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
 
 const ADMOB_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID;
 const INTERSTITIAL_AD_UNIT_ID = process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID;
-
-interface InterstitialAd {
-  adUnitId: string;
-  isLoaded: boolean;
-}
 
 let interstitialAd: InterstitialAd | null = null;
 
 /**
  * Initialize AdMob
  */
-export function initializeAdMob() {
+export async function initializeAdMob() {
   try {
     if (ADMOB_APP_ID) {
+      await MobileAds().initialize();
       console.log('AdMob initialized with app ID:', ADMOB_APP_ID);
-      // In production, initialize with: MobileAds.initialize()
     }
   } catch (error) {
     console.error('Error initializing AdMob:', error);
@@ -38,12 +34,24 @@ export async function loadInterstitialAd() {
       return;
     }
 
-    interstitialAd = {
-      adUnitId: INTERSTITIAL_AD_UNIT_ID,
-      isLoaded: true,
-    };
+    // Create a new interstitial ad instance
+    interstitialAd = InterstitialAd.createForAdRequest(INTERSTITIAL_AD_UNIT_ID);
 
-    console.log('Interstitial ad loaded');
+    // Set up event listeners
+    interstitialAd.onAdEvent((type) => {
+      if (type === AdEventType.LOADED) {
+        console.log('Interstitial ad loaded');
+      } else if (type === AdEventType.CLOSED) {
+        console.log('Interstitial ad closed');
+        // Preload next ad
+        loadInterstitialAd();
+      } else if (type === AdEventType.ERROR) {
+        console.error('Interstitial ad error');
+      }
+    });
+
+    // Load the ad
+    await interstitialAd?.load();
   } catch (error) {
     console.error('Error loading interstitial ad:', error);
   }
@@ -54,19 +62,21 @@ export async function loadInterstitialAd() {
  */
 export async function showInterstitialAd(): Promise<boolean> {
   try {
-    if (!interstitialAd || !interstitialAd.isLoaded) {
+    if (!interstitialAd) {
       console.warn('Interstitial ad not loaded');
       return false;
     }
 
+    // Check if ad is loaded
+    const isLoaded = await interstitialAd.isLoaded();
+    if (!isLoaded) {
+      console.warn('Interstitial ad not ready');
+      return false;
+    }
+
     console.log('Showing interstitial ad');
-    // Simulate ad display duration
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('Interstitial ad closed');
-        resolve(true);
-      }, 2000);
-    });
+    await interstitialAd.show();
+    return true;
   } catch (error) {
     console.error('Error showing interstitial ad:', error);
     return false;

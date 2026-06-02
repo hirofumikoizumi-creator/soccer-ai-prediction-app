@@ -16,7 +16,8 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "カメラを使用してスタメン画像を撮影します",
         "NSPhotoLibraryUsageDescription": "フォトライブラリからスタメン画像を選択します",
-        "NSPhotoLibraryAddUsageDescription": "スタメン画像をフォトライブラリに保存します"
+        "NSPhotoLibraryAddUsageDescription": "スタメン画像をフォトライブラリに保存します",
+        "SKAdNetworkItems": []
       }
     },
     "android": {
@@ -28,7 +29,8 @@
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "com.google.android.gms.permission.AD_ID"
       ]
     },
     "web": {
@@ -50,6 +52,12 @@
           "backgroundColor": "#003DA5",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "appId": "ca-app-pub-xxxxxxxxxxxxxxxx"
         }
       ]
     ],
