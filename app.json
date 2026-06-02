@@ -15,7 +15,7 @@
     "ios": {
       "supportsTabletMode": false,
       "bundleIdentifier": "com.gsw.socceraiyosou",
-      "buildNumber": "4",
+      "buildNumber": "5",
       "icon": "./assets/images/icon.png",
       "splash": {
         "image": "./assets/images/splash-icon.png",
