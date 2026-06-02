@@ -1,9 +1,17 @@
 import { Stack, DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
+import { useEffect } from 'react';
 import { Colors } from '@/constants/colors';
+import { scheduleDeferredInitialization } from '@/services/appInitializationService';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    // Schedule deferred initialization after app is rendered
+    scheduleDeferredInitialization();
+  }, []);
+
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

@@ -17,7 +17,24 @@
       "developmentClient": true
     },
     "production": {
-      "ios": {}
+      "ios": {
+        "buildType": "archive",
+        "node": "22.3.0",
+        "env": {
+          "EXPO_PUBLIC_ADMOB_APP_ID": "@env EXPO_PUBLIC_ADMOB_APP_ID",
+          "EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID": "@env EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID",
+          "GEMINI_API_KEY": "@env GEMINI_API_KEY"
+        }
+      },
+      "android": {
+        "buildType": "apk",
+        "node": "22.3.0",
+        "env": {
+          "EXPO_PUBLIC_ADMOB_APP_ID": "@env EXPO_PUBLIC_ADMOB_APP_ID",
+          "EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID": "@env EXPO_PUBLIC_ADMOB_INTERSTITIAL_AD_UNIT_ID",
+          "GEMINI_API_KEY": "@env GEMINI_API_KEY"
+        }
+      }
     }
   },
   "submit": {

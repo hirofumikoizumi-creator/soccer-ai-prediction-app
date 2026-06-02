@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
+import { useLazyImage } from '@/utils/lazyImageLoader';
 
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
@@ -83,6 +84,20 @@ const glowKeyframe = new Keyframe({
 export function AnimatedIcon() {
   const [glowError, setGlowError] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [imagesReady, setImagesReady] = useState(false);
+
+  // Lazy load images - they will be loaded on demand
+  const glowImage = useLazyImage('logo-glow', require('@/assets/images/logo-glow.png'));
+  const logoImage = useLazyImage('expo-logo', require('@/assets/images/expo-logo.png'));
+
+  useEffect(() => {
+    // Mark images as ready after a short delay to allow rendering
+    const timer = setTimeout(() => {
+      setImagesReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleGlowError = (error: Error) => {
     console.warn('Glow image failed to load:', error);
@@ -96,11 +111,11 @@ export function AnimatedIcon() {
 
   return (
     <View style={styles.iconContainer}>
-      {!glowError && (
+      {!glowError && imagesReady && (
         <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
           <Image
             style={styles.glow}
-            source={require('@/assets/images/logo-glow.png')}
+            source={glowImage}
             onError={handleGlowError}
             cachePolicy="memory-disk"
           />
@@ -109,10 +124,10 @@ export function AnimatedIcon() {
 
       <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
       <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        {!logoError ? (
+        {!logoError && imagesReady ? (
           <Image
             style={styles.image}
-            source={require('@/assets/images/expo-logo.png')}
+            source={logoImage}
             onError={handleLogoError}
             cachePolicy="memory-disk"
           />
