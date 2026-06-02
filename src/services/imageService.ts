@@ -5,20 +5,30 @@ import { ImageData } from '@/types';
  * Request camera permissions
  */
 export async function requestCameraPermissions(): Promise<boolean> {
-  const { status } = await ImagePicker.requestCameraPermissionsAsync();
-  return status === 'granted';
+  try {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    return status === 'granted';
+  } catch (error) {
+    console.error('Error requesting camera permissions:', error);
+    return false;
+  }
 }
 
 /**
  * Request media library permissions
  */
 export async function requestMediaLibraryPermissions(): Promise<boolean> {
-  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  return status === 'granted';
+  try {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    return status === 'granted';
+  } catch (error) {
+    console.error('Error requesting media library permissions:', error);
+    return false;
+  }
 }
 
 /**
- * Pick image from library
+ * Pick image from library with error handling
  */
 export async function pickImageFromLibrary(): Promise<ImageData | null> {
   try {
@@ -31,7 +41,7 @@ export async function pickImageFromLibrary(): Promise<ImageData | null> {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.8, // Reduce quality to prevent memory issues
     });
 
     if (result.canceled) {
@@ -39,6 +49,11 @@ export async function pickImageFromLibrary(): Promise<ImageData | null> {
     }
 
     const asset = result.assets[0];
+    
+    if (!asset.uri) {
+      throw new Error('Image URI is missing');
+    }
+
     return {
       uri: asset.uri,
       type: asset.type || 'image',
@@ -51,7 +66,7 @@ export async function pickImageFromLibrary(): Promise<ImageData | null> {
 }
 
 /**
- * Take photo with camera
+ * Take photo with camera with error handling
  */
 export async function takePhotoWithCamera(): Promise<ImageData | null> {
   try {
@@ -64,7 +79,7 @@ export async function takePhotoWithCamera(): Promise<ImageData | null> {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.8, // Reduce quality to prevent memory issues
     });
 
     if (result.canceled) {
@@ -72,6 +87,11 @@ export async function takePhotoWithCamera(): Promise<ImageData | null> {
     }
 
     const asset = result.assets[0];
+    
+    if (!asset.uri) {
+      throw new Error('Image URI is missing');
+    }
+
     return {
       uri: asset.uri,
       type: asset.type || 'image',
