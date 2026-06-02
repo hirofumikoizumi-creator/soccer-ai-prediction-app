@@ -10,7 +10,7 @@
     "ios": {
       "supportsTabletMode": false,
       "bundleIdentifier": "com.gsw.socceraiyosou",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "icon": "./assets/images/icon.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
