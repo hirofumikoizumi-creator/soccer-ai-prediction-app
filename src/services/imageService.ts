@@ -29,7 +29,7 @@ export async function pickImageFromLibrary(): Promise<ImageData | null> {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsEditing: false,
+      allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
@@ -62,7 +62,7 @@ export async function takePhotoWithCamera(): Promise<ImageData | null> {
 
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
-      allowsEditing: false,
+      allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
