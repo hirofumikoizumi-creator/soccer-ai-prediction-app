@@ -27,7 +27,9 @@
         "NSCameraUsageDescription": "カメラを使用してスタメン画像を撮影します",
         "NSPhotoLibraryUsageDescription": "フォトライブラリからスタメン画像を選択します",
         "NSPhotoLibraryAddUsageDescription": "スタメン画像をフォトライブラリに保存します",
-        "SKAdNetworkItems": []
+        "SKAdNetworkItems": [],
+        "NSLocalNetworkUsageDescription": "ローカルネットワークへのアクセスを許可してください",
+        "NSBonjourServiceTypes": []
       }
     },
     "android": {
@@ -73,12 +75,6 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain"
-        }
-      ],
-      [
-        "react-native-google-mobile-ads",
-        {
-          "appId": "ca-app-pub-xxxxxxxxxxxxxxxx"
         }
       ]
     ],

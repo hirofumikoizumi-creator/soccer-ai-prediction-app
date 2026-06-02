@@ -8,11 +8,20 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    // Schedule deferred initialization after app is rendered
-    scheduleDeferredInitialization();
+    try {
+      // Schedule deferred initialization after app is rendered
+      // Wrap in try-catch to prevent crashes from initialization errors
+      scheduleDeferredInitialization().catch((error) => {
+        console.warn('Deferred initialization error (non-critical):', error);
+        // Continue anyway - initialization errors should not crash the app
+      });
+    } catch (error) {
+      console.warn('Layout initialization error:', error);
+      // Continue anyway - errors should not prevent app from rendering
+    }
   }, []);
 
-
+  // Render immediately without waiting for initialization
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
