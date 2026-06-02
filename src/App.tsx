@@ -3,10 +3,19 @@ import { initializeAdMob, preloadNextAd } from '@/services/admobService';
 
 export default function App() {
   useEffect(() => {
-    // Initialize AdMob on app start
-    initializeAdMob();
-    // Preload first ad
-    preloadNextAd();
+    const initializeApp = async () => {
+      try {
+        // Initialize AdMob on app start
+        await initializeAdMob();
+        // Preload first ad
+        await preloadNextAd();
+      } catch (error) {
+        console.error('App initialization error:', error);
+        // Continue app execution even if initialization fails
+      }
+    };
+
+    initializeApp();
   }, []);
 
   return null;
